@@ -1,0 +1,46 @@
+{
+  "name": "dsh-paste-path",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness plugin: paste Finder file paths into the composer with Ctrl+V",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-slots"
+      ],
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "test": "node --check lib/index.js && node --check lib/client.js && node --test"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "finder",
+    "clipboard",
+    "absolute-path"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  }
+}

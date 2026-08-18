@@ -1,0 +1,5 @@
+# Inserted into the profile composition when this bundle is installed
+# (`dsh plugin --profile web add ./dsh-paste-path`).
+- insert:
+    - id: dsh-paste-path
+      name: dsh-paste-path
