@@ -40,6 +40,14 @@
     "absolute-path"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhuanxx44/dsh-paste-path.git"
+  },
+  "homepage": "https://github.com/jhuanxx44/dsh-paste-path",
+  "bugs": {
+    "url": "https://github.com/jhuanxx44/dsh-paste-path/issues"
+  },
   "engines": {
     "node": ">=22"
   }
