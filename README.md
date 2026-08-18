@@ -15,6 +15,12 @@ DeepSeek Harness Web 插件：在 Finder 里 **Cmd+C** 复制文件或文件夹�
 
 ## 安装
 
+从 npm：
+
+```sh
+dsh plugin --profile web add dsh-paste-path
+```
+
 从 GitHub：
 
 ```sh
@@ -29,7 +35,8 @@ dsh plugin --profile web add /Users/jinghuan/code/dsh-paste-path
 
 装完后重启 `dsh web` 并刷新页面。
 
-仓库：<https://github.com/jhuanxx44/dsh-paste-path>
+- npm：<https://www.npmjs.com/package/dsh-paste-path>
+- 仓库：<https://github.com/jhuanxx44/dsh-paste-path>
 
 ## 权限
 
