@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#fafafa"/>
+  <rect x="96" y="92" width="54" height="54" rx="10" fill="#262a31"/>
+  <path d="M128 104 113 134" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <text x="175" y="129" fill="#6a707a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="22">Jinghuan · Technical note</text>
+  <text x="96" y="245" fill="#20242a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="62" font-weight="700">Pasting Finder file paths into</text>
+  <text x="96" y="322" fill="#20242a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="62" font-weight="700">DeepSeek Harness on macOS</text>
+  <line x1="96" y1="390" x2="1104" y2="390" stroke="#d9dce1"/>
+  <text x="96" y="448" fill="#525a65" font-family="SFMono-Regular, Menlo, monospace" font-size="25">Finder Cmd+C  →  host bridge  →  DSH Ctrl+V</text>
+  <text x="96" y="535" fill="#6a707a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="22">The small macOS-to-browser gap I kept hitting, and how I removed it.</text>
+</svg>

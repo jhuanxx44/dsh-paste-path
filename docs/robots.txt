@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jhuanxx44.github.io/dsh-paste-path/sitemap.xml

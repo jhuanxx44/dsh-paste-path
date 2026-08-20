@@ -1,5 +1,7 @@
 # dsh-paste-path
 
+[English](./README.en.md) · 简体中文
+
 DeepSeek Harness Web 插件：在 Finder 里 **Cmd+C** 复制文件或文件夹后，回到 DSH 按 **Ctrl+V**，把绝对路径插入当前输入框。
 
 普通文字继续用 **Cmd+V**。
