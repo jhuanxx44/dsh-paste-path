@@ -1,55 +1,93 @@
 # dsh-paste-path
 
-[English](./README.en.md) · 简体中文
+English · [简体中文](./README.zh-CN.md) · Website: [English](https://jhuanxx44.github.io/dsh-paste-path/) / [中文](https://jhuanxx44.github.io/dsh-paste-path/zh/)
 
-DeepSeek Harness Web 插件：在 Finder 里 **Cmd+C** 复制文件或文件夹后，回到 DSH 按 **Ctrl+V**，把绝对路径插入当前输入框。
+A macOS plugin for DeepSeek Harness Web. Copy files or folders in Finder with **Cmd+C**, return to DSH, then press **Ctrl+V** to insert their absolute paths into the composer.
 
-普通文字继续用 **Cmd+V**。
+Normal text paste stays on **Cmd+V**.
 
-## 用法
+## The problem
 
-1. 在 Finder 里选中文件或文件夹，按 `Cmd+C`
-2. 回到 DSH Web
-3. 输入框工具栏会出现一小块 `Ctrl+V 贴路径`
-4. 按 `Ctrl+V` 插入绝对路径
+Copying a file in Finder does not put a plain absolute path on the clipboard. Finder writes a native file-list representation, while a browser editor is deliberately isolated from local filesystem paths. That leaves a small but recurring gap when you want to give a local file path to an agent.
 
-剪贴板不是文件路径时，提示不会出现。
+`dsh-paste-path` bridges that gap inside DSH without uploading the file or taking over normal paste.
 
-## 安装
+## Use it
 
-从 npm：
+1. Select one or more files or folders in Finder and press `Cmd+C`.
+2. Return to DSH Web.
+3. When the composer shows the `Ctrl+V Paste path` hint, press `Ctrl+V`.
+4. The absolute paths are inserted into the current draft, one per line.
+
+The hint stays hidden when the clipboard does not contain file paths. Duplicate paths already present in the draft are skipped.
+
+## Install
+
+From npm:
 
 ```sh
 dsh plugin --profile web add dsh-paste-path
 ```
 
-从 GitHub：
+From GitHub:
 
 ```sh
 dsh plugin --profile web add github:jhuanxx44/dsh-paste-path
 ```
 
-本机开发目录：
+For local development:
 
 ```sh
-dsh plugin --profile web add /Users/jinghuan/code/dsh-paste-path
+dsh plugin --profile web add /absolute/path/to/dsh-paste-path
 ```
 
-装完后重启 `dsh web` 并刷新页面。
+Restart `dsh web` and refresh the page after installation.
 
-- npm：<https://www.npmjs.com/package/dsh-paste-path>
-- 仓库：<https://github.com/jhuanxx44/dsh-paste-path>
+- [npm package](https://www.npmjs.com/package/dsh-paste-path)
+- [source repository](https://github.com/jhuanxx44/dsh-paste-path)
 
-## 权限
+## How it works
 
-插件只在 macOS 上生效。Host 会通过 `osascript` 读系统剪贴板里的 `NSFilenamesPboardType`（以及纯文本里的绝对路径），接口仅对本机 loopback / same-origin 开放。
+The host plugin reads macOS Pasteboard file-list data (`NSFilenamesPboardType`) through `osascript`. A small DSH client extension checks whether a path is ready and inserts it into the active composer only when you press `Ctrl+V`.
 
-这不是浏览器 Clipboard API，所以普通网页权限弹窗不会出现；本机自动化权限不够时，粘贴会失败。
+The browser Clipboard API is not used, so the plugin does not trigger a normal website clipboard permission prompt.
 
-## 开发
+## Security boundary
+
+- The plugin only activates on macOS.
+- Clipboard endpoints accept loopback connections only.
+- Mutating paste requests must be same-origin.
+- Clipboard responses are never cached by HTTP.
+- Files are not opened or uploaded; only their absolute paths are inserted.
+- Ordinary `Cmd+V` behavior is left untouched.
+
+macOS may still deny `osascript` access depending on your local automation permissions. If that happens, grant the relevant permission and try again.
+
+## Remote DSH deployments
+
+The clipboard belongs to the machine running `dsh web`, not necessarily the browser you are using.
+
+- **LAN IP or public hostname:** the host rejects non-loopback clipboard requests with `403`, so the plugin cannot provide your Mac's local paths.
+- **SSH port forwarding or a jump host:** the connection still appears as loopback to DSH. The plugin cannot detect the tunnel and would read the remote server's clipboard, not your Mac's clipboard.
+
+If you need to send local files to a remote DSH instance, use an upload-oriented plugin instead. This plugin intentionally solves local path handoff only.
+
+## Develop
+
+Requirements:
+
+- macOS
+- Node.js 22 or newer
+- DeepSeek Harness Web
+
+Run the checks:
 
 ```sh
 npm test
 ```
 
-当前会话里的动态插件 `fpath-1` 是原型。这个仓库是可安装、可重启保留的正式包。
+The earlier in-session plugin named `fpath-1` was the prototype. This repository is the installable, restart-persistent package.
+
+## License
+
+[MIT](./LICENSE)
