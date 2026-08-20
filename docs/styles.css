@@ -52,9 +52,17 @@ kbd {
   text-decoration: none;
 }
 
-nav { display: flex; gap: 22px; }
+nav { display: flex; align-items: center; gap: 22px; }
 nav a { color: var(--muted); text-decoration: none; }
 nav a:hover { color: var(--text); }
+.github-icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+}
+.github-icon svg { width: 19px; height: 19px; fill: currentColor; }
 
 main {
   width: min(760px, calc(100% - 40px));

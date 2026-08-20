@@ -2,7 +2,7 @@
   <rect width="1200" height="630" fill="#fafafa"/>
   <rect x="96" y="92" width="54" height="54" rx="10" fill="#262a31"/>
   <path d="M128 104 113 134" stroke="white" stroke-width="6" stroke-linecap="round"/>
-  <text x="175" y="129" fill="#6a707a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="22">Jinghuan · Technical note</text>
+  <text x="175" y="129" fill="#6a707a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="22">jhuanxx44 · Technical note</text>
   <text x="96" y="245" fill="#20242a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="62" font-weight="700">Pasting Finder file paths into</text>
   <text x="96" y="322" fill="#20242a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="62" font-weight="700">DeepSeek Harness on macOS</text>
   <line x1="96" y1="390" x2="1104" y2="390" stroke="#d9dce1"/>

@@ -1,6 +1,6 @@
 # dsh-paste-path
 
-English · [简体中文](./README.md) · [Website](https://jhuanxx44.github.io/dsh-paste-path/)
+English · [简体中文](./README.md) · Website: [English](https://jhuanxx44.github.io/dsh-paste-path/) / [中文](https://jhuanxx44.github.io/dsh-paste-path/zh/)
 
 A macOS plugin for DeepSeek Harness Web. Copy files or folders in Finder with **Cmd+C**, return to DSH, then press **Ctrl+V** to insert their absolute paths into the composer.
 
