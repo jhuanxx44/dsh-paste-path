@@ -7,5 +7,5 @@
   <text x="96" y="322" fill="#20242a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="62" font-weight="700">DeepSeek Harness on macOS</text>
   <line x1="96" y1="390" x2="1104" y2="390" stroke="#d9dce1"/>
   <text x="96" y="448" fill="#525a65" font-family="SFMono-Regular, Menlo, monospace" font-size="25">Finder Cmd+C  →  host bridge  →  DSH Ctrl+V</text>
-  <text x="96" y="535" fill="#6a707a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="22">The small macOS-to-browser gap I kept hitting, and how I removed it.</text>
+  <text x="96" y="535" fill="#6a707a" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="22">Finder copies file references. DSH Web needs path text. I bridged the two.</text>
 </svg>

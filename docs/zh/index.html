@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>在 macOS 上把 Finder 文件路径粘贴进 DeepSeek Harness</title>
-    <meta name="description" content="一次真实的本地工作流记录：为什么 Finder 复制的文件不能直接变成浏览器里的绝对路径，以及我如何用一个 DSH 插件补上 macOS Pasteboard 与 Web 输入框之间的缺口。">
+    <meta name="description" content="Finder 复制的是原生文件引用，浏览器无法读取本机路径。我写了一个 DSH 插件，把 macOS Pasteboard 中的路径传给 Web 输入框。">
     <meta name="author" content="jhuanxx44">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#fafafa">
@@ -16,7 +16,7 @@
     <meta property="og:type" content="article">
     <meta property="og:locale" content="zh_CN">
     <meta property="og:title" content="在 macOS 上把 Finder 文件路径粘贴进 DeepSeek Harness">
-    <meta property="og:description" content="我反复碰到的一个 Finder 到浏览器的小断点，以及我写的 DSH 插件。">
+    <meta property="og:description" content="我如何把 Finder 文件路径从 macOS Host 传进 DSH Web 输入框。">
     <meta property="og:url" content="https://jhuanxx44.github.io/dsh-paste-path/zh/">
     <meta property="og:image" content="https://jhuanxx44.github.io/dsh-paste-path/assets/social-card-zh.png">
     <meta property="article:published_time" content="2026-08-20">
@@ -28,7 +28,7 @@
         "@type": "TechArticle",
         "inLanguage": "zh-CN",
         "headline": "在 macOS 上把 Finder 文件路径粘贴进 DeepSeek Harness",
-        "description": "一次关于 Finder 文件复制、浏览器安全边界与 DSH 插件桥接的个人技术记录。",
+        "description": "我如何把 Finder 文件路径从 macOS Host 传进 DeepSeek Harness Web 输入框。",
         "datePublished": "2026-08-20",
         "dateModified": "2026-08-20",
         "author": { "@type": "Person", "name": "jhuanxx44", "url": "https://github.com/jhuanxx44" },
@@ -54,27 +54,27 @@
         <header class="article-header">
           <p class="article-meta"><time datetime="2026-08-20">2026 年 8 月 20 日</time> · 约 6 分钟</p>
           <h1>在 macOS 上把 Finder 文件路径粘贴进 DeepSeek Harness</h1>
-          <p class="dek">我在 Finder 和浏览器里的 Coding Agent 之间反复遇到一个很小的断点。这里记录它为什么会出现，以及我写的 DSH 插件如何把它补上。</p>
+          <p class="dek">Finder 复制的是原生文件引用，DSH Web 需要的是路径文本。我写了一个小插件，让路径穿过浏览器边界。</p>
         </header>
 
         <div class="article-body">
           <h2>我反复碰到的问题</h2>
 
-          <p>我通过浏览器界面使用 <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a>。工作中一个很常见的动作，是让 Agent 查看本机某个文件，或者进入某个本地目录继续处理。</p>
+          <p>我通过浏览器界面使用 <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a>。我经常让 Agent 查看本机文件，或者进入某个本地目录继续处理。</p>
 
-          <p>文件已经在 Finder 里，我也已经选中它并按下 <kbd>Cmd</kbd> + <kbd>C</kbd>，但回到 DSH 输入框以后，普通粘贴并不会得到它的绝对路径。我还是得选择“拷贝为路径名称”、打开终端、把文件拖进某个输入框，或者手动输入路径。</p>
+          <p>路径就在 Finder 里。我选中文件并按下 <kbd>Cmd</kbd> + <kbd>C</kbd>，回到 DSH 输入框却得不到绝对路径。我还得选择“拷贝为路径名称”、打开终端，或者手动输入路径。</p>
 
-          <p>这些办法都不难。真正让我觉得麻烦的，是每次从“浏览文件”切换到“和 Agent 对话”时，都要重复一次绕路。</p>
+          <p>每种办法都会在“找到文件”和“让 Agent 使用文件”之间多加一步。我一天要重复很多次。</p>
 
           <pre class="path-example"><code>/Users/you/code/my-project/src/index.js</code></pre>
 
-          <h2>为什么普通粘贴拿不到路径</h2>
+          <h2>Finder 与浏览器之间的边界</h2>
 
-          <p>Finder 复制文件时，并不只是把一段绝对路径写成纯文本。它会在 macOS Pasteboard 中写入原生的文件引用列表；在这个场景里，有用的数据可以通过 <code>NSFilenamesPboardType</code> 读取。</p>
+          <p>Finder 会在 macOS Pasteboard 中写入原生文件引用列表，不会把绝对路径写成普通剪贴板文本。AppKit 通过 <code>NSFilenamesPboardType</code> 暴露这份列表。</p>
 
-          <p>另一边，DSH 的输入框运行在浏览器里。浏览器有意限制网页把任意复制的文件转换成本机绝对路径。这条边界是合理的：一个普通网页不应该能够随意知道我的文件系统结构。</p>
+          <p>DSH 输入框运行在浏览器里。浏览器的安全规则阻止网页把复制的文件转换成本机绝对路径。没有这条规则，任意网页都能探知我的文件系统结构。</p>
 
-          <p>所以，这并不是 DSH 文本输入框的 bug。Host 侧掌握着信息，但浏览器侧不应该直接读取它。</p>
+          <p>DSH 从未收到这条路径。macOS 把文件引用留在 Host 侧，浏览器无法直接读取。</p>
 
           <figure>
             <pre><code>Finder
@@ -85,9 +85,9 @@ DSH Web 输入框
             <figcaption>文件引用和文本输入框位于一条刻意存在的浏览器边界两侧。</figcaption>
           </figure>
 
-          <h2>我想要的交互</h2>
+          <h2>我想要的快捷键</h2>
 
-          <p>我不想替换普通粘贴，也不想做一个通用剪贴板管理器。我只想增加一个非常窄的交互：</p>
+          <p>我只需要增加一个快捷键，同时保持普通粘贴不变：</p>
 
           <ol>
             <li>在 Finder 中选中一个或多个文件、文件夹，按 <kbd>Cmd</kbd> + <kbd>C</kbd>。</li>
@@ -96,23 +96,23 @@ DSH Web 输入框
             <li>把绝对路径逐行插入当前草稿。</li>
           </ol>
 
-          <p><kbd>Cmd</kbd> + <kbd>V</kbd> 必须继续承担普通文本粘贴。剪贴板里没有文件路径时，插件也不应该接管 <kbd>Ctrl</kbd> + <kbd>V</kbd>。</p>
+          <p><kbd>Cmd</kbd> + <kbd>V</kbd> 继续粘贴普通文本。剪贴板里没有文件路径时，插件忽略 <kbd>Ctrl</kbd> + <kbd>V</kbd>。</p>
 
-          <h2>我的解法：一座很小的 Host–Client 桥</h2>
+          <h2>我的解法：Host 读取，Client 写入</h2>
 
-          <p>我写了 <a href="https://github.com/jhuanxx44/dsh-paste-path"><code>dsh-paste-path</code></a>，它是一个只面向 macOS 和 DSH Web profile 的插件，由很小的 Host、Client 两部分组成。</p>
+          <p>我写了 <a href="https://github.com/jhuanxx44/dsh-paste-path"><code>dsh-paste-path</code></a>，一个面向 macOS 和 DSH Web profile 的插件。Host 读取 Pasteboard，Client 写入输入框。</p>
 
           <h3>1. 在 Host 侧读取原生 Pasteboard</h3>
 
-          <p>Host 插件通过带 AppKit 的 <code>osascript</code> 读取 <code>NSFilenamesPboardType</code>。如果 Finder 里同时复制了多个文件，它会返回多条路径。它也接受纯文本路径，但前提是每一条非空内容都必须是绝对路径。</p>
+          <p>Host 插件通过带 AppKit 的 <code>osascript</code> 读取 <code>NSFilenamesPboardType</code>。Finder 可以一次复制多个文件。插件会返回路径列表，也接受每一行都是绝对路径的纯文本。</p>
 
-          <p>插件提供两个本地接口：一个只检查当前是否存在可用路径，另一个在用户真正执行粘贴时返回路径。重复检查会利用 Pasteboard 的 change count；剪贴板没有变化时，不需要反复读取完整内容。</p>
+          <p>插件提供两个本地接口。第一个检查当前是否有可用路径，第二个在我按下快捷键后返回路径。Host 记录 Pasteboard 的 change count；剪贴板没有变化时，它复用上一次结果。</p>
 
           <h3>2. 在 DSH Client 侧写入路径</h3>
 
-          <p>只有检测到有效路径时，Client 扩展才显示一个很小的“Ctrl+V 贴路径”提示。按下快捷键后，它把新路径追加到当前输入框，同时跳过已经存在于草稿中的重复路径。</p>
+          <p>Client 扩展检测到有效路径后，显示“Ctrl+V 贴路径”。我按下快捷键，它把新路径追加到当前输入框，并跳过重复路径。</p>
 
-          <p>因此，普通剪贴板行为没有改变。额外的快捷键只服务于浏览器本身无法完成的这一种情况。</p>
+          <p>我把这个快捷键限定在文件路径场景。其他剪贴板内容仍由浏览器处理。</p>
 
           <figure>
             <pre><code>Finder Cmd+C
@@ -124,21 +124,21 @@ macOS Pasteboard
 DSH Web 输入框
     ↓  Ctrl+V
 草稿里的绝对路径</code></pre>
-            <figcaption>插件跨越 Host–Browser 接缝传递的是路径文本，不是文件内容。</figcaption>
+            <figcaption>插件跨越 Host–Browser 接缝传递路径文本，文件内容留在原处。</figcaption>
           </figure>
 
-          <h2>边界同样重要</h2>
+          <h2>剪贴板接口只允许本机访问</h2>
 
-          <p>剪贴板属于运行 <code>dsh web</code> 的那台机器。因此，插件的剪贴板接口只接受 loopback 连接，实际写入路径的请求还要通过 same-origin 检查。</p>
+          <p>剪贴板属于运行 <code>dsh web</code> 的机器。插件只接受 loopback 请求，并在写入路径前检查请求来源。</p>
 
           <ul>
-            <li>插件不会打开或上传复制的文件。</li>
-            <li>它只向草稿插入绝对路径字符串。</li>
-            <li>它在 macOS 之外不会启用。</li>
-            <li>它不是远程 DSH 服务器的文件传输方案。</li>
+            <li>Host 返回路径字符串，文件内容留在原处。</li>
+            <li>Host 拒绝来自非 loopback 地址的剪贴板请求。</li>
+            <li>插件在 Linux 和 Windows 上不会注册接口。</li>
+            <li>远程 DSH 需要文件上传或客户端配套程序。</li>
           </ul>
 
-          <p>最后一点尤其重要。如果 DSH 运行在另一台机器上，它的进程就无法读取我这台 Mac 的剪贴板。SSH 端口转发可以让连接在服务器看来仍像 loopback，但它不会自动把客户端剪贴板搬过隧道。远程工作流需要的是文件上传，或者一个明确运行在客户端的配套程序。</p>
+          <p>另一台机器上的 DSH 进程无法读取我这台 Mac 的剪贴板。SSH 端口转发会让请求在服务器看来像 loopback，但不会把我的剪贴板带过隧道。</p>
 
           <h2>安装</h2>
 
@@ -148,11 +148,11 @@ DSH Web 输入框
 
           <p>安装后重启 <code>dsh web</code> 并刷新页面。源码、实现说明和当前限制都在 <a href="https://github.com/jhuanxx44/dsh-paste-path">GitHub 仓库</a>中。</p>
 
-          <h2>这件小事给我的启发</h2>
+          <h2>只做路径粘贴</h2>
 
-          <p>实现很小，因为问题本身也很小。但它恰好落在一条很有意思的边界上：操作系统知道一件浏览器不应该知道的事，而本地 Agent 又确实可以合理使用这条信息。</p>
+          <p>操作系统知道文件路径，浏览器不能把它暴露给任意网页。我主动触发粘贴时，本地 Agent 才得到这条信息。</p>
 
-          <p>我的解法不是削弱这条边界，也不是为此构造一个庞大的文件传输系统，而是为一个反复发生的动作增加一座明确、本地、边界可见的小桥。</p>
+          <p>我保留了浏览器边界，只为一个快捷键增加 loopback 桥接。插件读取路径文本，把它写进草稿，然后停止。</p>
         </div>
 
         <footer class="article-footer">
@@ -164,7 +164,7 @@ DSH Web 输入框
 
     <footer class="site-footer">
       <span>© 2026 jhuanxx44</span>
-      <span>来自真实本地工作流的技术记录。</span>
+      <span>来自我的本地 DSH 工作流。</span>
     </footer>
   </body>
 </html>

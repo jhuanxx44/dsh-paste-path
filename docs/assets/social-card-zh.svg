@@ -7,5 +7,5 @@
   <text x="96" y="322" fill="#20242a" font-family="PingFang SC, Hiragino Sans GB, sans-serif" font-size="58" font-weight="700">粘贴进 DeepSeek Harness</text>
   <line x1="96" y1="390" x2="1104" y2="390" stroke="#d9dce1"/>
   <text x="96" y="448" fill="#525a65" font-family="SFMono-Regular, Menlo, monospace" font-size="25">Finder Cmd+C  →  Host bridge  →  DSH Ctrl+V</text>
-  <text x="96" y="535" fill="#6a707a" font-family="PingFang SC, Hiragino Sans GB, sans-serif" font-size="22">我反复碰到的 macOS 到浏览器的小断点，以及我的解法。</text>
+  <text x="96" y="535" fill="#6a707a" font-family="PingFang SC, Hiragino Sans GB, sans-serif" font-size="22">Finder 复制文件引用，DSH Web 需要路径文本。这是我的解法。</text>
 </svg>
