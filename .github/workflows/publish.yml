@@ -1,0 +1,37 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Lets npm attach provenance attestations automatically when publishing
+      # from GitHub Actions.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # No install step: the package has no runtime dependencies and the
+      # test suite only imports node: builtins and local files.
+      - name: Run tests
+        run: npm test
+
+      - name: Verify tag matches package.json version
+        if: github.ref_type == 'tag'
+        run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+
+      - name: npm publish
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
