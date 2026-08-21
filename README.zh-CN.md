@@ -46,6 +46,15 @@ dsh plugin --profile web add /Users/jinghuan/code/dsh-paste-path
 
 这不是浏览器 Clipboard API，所以普通网页权限弹窗不会出现；本机自动化权限不够时，粘贴会失败。
 
+## 远程部署
+
+剪贴板属于运行 `dsh web` 的那台机器。把 DSH 部署到远程服务器上时：
+
+- **直接通过局域网 IP / 域名访问**：Host 会拒绝非 loopback 的接口请求（403），客户端检测到后自动停用——提示按钮不出现、停止轮询、`Ctrl+V` 行为完全不受影响，也不会误读服务器的剪贴板。
+- **SSH 端口转发（`ssh -L 3080:localhost:3080 …`）或跳板机**：连接在 Host 看来仍是本机回环，插件无法区分，此时读到的是**服务器**的剪贴板，不是你本地 Mac 的。这是运行位置决定的，HTTP 层探测不到转发。
+
+需要把本机文件路径贴进远程 DSH 时，插件帮不上忙：请直接在本机运行 DSH，或改用拖拽上传类插件（文件内容随消息进入会话，见 awesome-dsh-plugin 列表的 UI Enhancements 分类）。
+
 ## 开发
 
 ```sh

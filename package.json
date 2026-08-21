@@ -1,6 +1,6 @@
 {
   "name": "dsh-paste-path",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "DeepSeek Harness plugin: paste Finder file paths into the composer with Ctrl+V",
   "type": "module",
   "main": "./lib/index.js",
